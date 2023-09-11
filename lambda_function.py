@@ -32,16 +32,16 @@ data = {
     'query': mutation
 }
 
-print("Sending request to", graphql_endpoint,"...")
+def handler(event, context):
+    response = requests.post(graphql_endpoint, json=data, headers=headers)
 
-# Send the GraphQL request
-response = requests.post(graphql_endpoint, json=data, headers=headers)
+    message = response.json() if response.status_code == 200 else f"GraphQL request failed."
 
-# Check for a successful response
-if response.status_code == 200:
-    result = response.json()
-    print(result)
-else:
-    print(f"GraphQL request failed with status code {response.status_code}:")
-    print(response.text)
+    result = {
+        'status_code': response.status_code,
+        'message:': message
+    }
 
+    print("Attempted to present daily aphorism:", result)
+
+    return result
