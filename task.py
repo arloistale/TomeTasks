@@ -19,7 +19,7 @@ mutation MyMutation {
 '''
 
 # Define the GraphQL endpoint URL
-graphql_endpoint = 'YOUR_GRAPHQL_ENDPOINT_URL_HERE'
+graphql_endpoint = 'https://jtome-backend.onrender.com/graphql'
 
 # Define the headers (if needed)
 headers = {
