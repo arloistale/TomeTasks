@@ -32,6 +32,8 @@ data = {
     'query': mutation
 }
 
+print("Sending request to", graphql_endpoint,"...")
+
 # Send the GraphQL request
 response = requests.post(graphql_endpoint, json=data, headers=headers)
 
