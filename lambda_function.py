@@ -1,3 +1,4 @@
+import time
 import requests
 
 # Define the GraphQL mutation
@@ -18,27 +19,34 @@ mutation MyMutation {
 }
 '''
 
-# Define the GraphQL endpoint URL
 graphql_endpoint = 'https://tome-backend.fly.dev/graphql'
 
-# Define the headers (if needed)
-headers = {
-    'Content-Type': 'application/json',
-    # Add any other headers as required (e.g., authentication headers)
-}
-
-# Create a dictionary for the GraphQL request payload
-data = {
-    'query': mutation
-}
-
 def handler(event, context):
-    response = requests.post(graphql_endpoint, json=data, headers=headers)
+    max_retries = 3
+    retry_delay = 5
 
-    message = response.json() if response.status_code == 200 else f"GraphQL request failed."
+    response = None
+    message = None
+
+    for retry_count in range(max_retries):
+      try: 
+          response = requests.post(graphql_endpoint, json = { 'query': mutation }, headers = { 'Content-Type': 'application/json', })
+
+          if response.status_code == 200:
+              message = response.json()
+              break
+          else:
+              message = "GraphQL request failed."
+              print(f"{message} Retrying in {retry_delay} seconds...")
+      except Exception as e:
+          message = f"Exception occurred: {str(e)}."
+          print(f"{message} Retrying in {retry_delay} seconds...")
+
+      if retry_count < max_retries - 1:
+          time.sleep(retry_delay)
 
     result = {
-        'status_code': response.status_code,
+        'status_code': response.status_code if response is not None else "?",
         'message:': message
     }
 
